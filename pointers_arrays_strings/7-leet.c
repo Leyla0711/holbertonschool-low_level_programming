@@ -11,7 +11,7 @@ char *leet(char *s)
 {
     int i,j;
     char replacements[] = "43071";
-    char targets[] = "aeotlAEOTL";
+    char targets[] = "aAeEoOtTlL";
 
     for (i = 0; s[i] != '\0'; i++)
     {
