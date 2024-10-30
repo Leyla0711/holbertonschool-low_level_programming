@@ -10,19 +10,21 @@
 char *leet(char *s)
 {
     int i;
+    char mapping[] = "aeotlAEOTL";
+    char replacements[] = "43071";
 
     for (i = 0; s[i] != '\0'; i++)
     {
-        if (s[i] == 'a' || s[i] == 'A')
-            s[i] = '4';
-        else if (s[i] == 'e' || s[i] == 'E')
-            s[i] = '3';
-        else if (s[i] == 'o' || s[i] == 'O')
-            s[i] = '0';
-        else if (s[i] == 't' || s[i] == 'T')
-            s[i] = '7';
-        else if (s[i] == 'l' || s[i] == 'L')
-            s[i] = '1';
+        int j;
+        for (j = 0; j < 10; j++)
+        {
+            // Use only one if statement to check all mappings
+            if (s[i] == mapping[j])
+            {
+                s[i] = replacements[j / 2]; // Replace with corresponding leet character
+                break; // Break once a match is found
+            }
+        }
     }
 
     return (s);
