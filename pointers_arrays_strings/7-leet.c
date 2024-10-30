@@ -9,18 +9,18 @@
 
 char *leet(char *s)
 {
-    int i,j;
+    int i, j;
     char replacements[] = "43071";
     char targets[] = "aAeEoOtTlL";
 
     for (i = 0; s[i] != '\0'; i++)
     {
-        for ( j = 0; j < 10; j++)
+        for (j = 0; j < 10; j++)
         {
             if (s[i] == targets[j])
             {
                 s[i] = replacements[j / 2];
-                break; 
+                break;
             }
         }
     }
