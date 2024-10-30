@@ -10,24 +10,19 @@
 char *leet(char *s)
 {
     int i;
-    char replacement;
+    char replacements[] = "43071"; // Mapped replacements for a, e, o, t, l
+    char targets[] = "aeotlAEOTL"; // Corresponding target characters
 
     for (i = 0; s[i] != '\0'; i++)
     {
-        replacement = s[i]; // Default to current character
-
-        if (s[i] == 'a' || s[i] == 'A')
-            replacement = '4';
-        else if (s[i] == 'e' || s[i] == 'E')
-            replacement = '3';
-        else if (s[i] == 'o' || s[i] == 'O')
-            replacement = '0';
-        else if (s[i] == 't' || s[i] == 'T')
-            replacement = '7';
-        else if (s[i] == 'l' || s[i] == 'L')
-            replacement = '1';
-
-        s[i] = replacement; // Assign the replacement character
+        for (int j = 0; j < 10; j++)
+        {
+            if (s[i] == targets[j])
+            {
+                s[i] = replacements[j / 2]; // Use j/2 to get the correct index in replacements
+                break; // Break after the first match
+            }
+        }
     }
 
     return (s);
