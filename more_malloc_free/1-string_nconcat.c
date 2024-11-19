@@ -1,5 +1,6 @@
 #include "main.h"
 #include <stdlib.h>
+
 /**
 * string_nconcat - prints concatenate string;
 * @s1: input string.
@@ -7,6 +8,7 @@
 * @n: len s2 string for print.
 * Return: Nothing.
 */
+
 char *string_nconcat(char *s1, char *s2, unsigned int n)
 {
 	unsigned int l1, i, e;
