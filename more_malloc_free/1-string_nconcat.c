@@ -1,4 +1,4 @@
-#include "mainn.h"
+#include "main.h"
 #include <stdlib.h>
 /**
 * string_nconcat - prints concatenate string;
