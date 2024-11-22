@@ -1,6 +1,5 @@
-#include "dog.h"
+include "dog.h"
 #include <stdlib.h>
-
 /**
   * new_dog - creates a new struct of type dog
   * @name: struct parameter name
@@ -8,9 +7,7 @@
   * @owner: struct parameter owner
   * Return: returns pointer to buffer of datatype dog
   */
-
 dog_t *new_dog(char *name, float age, char *owner)
-
 {
 	int nlen, olen, i;
 	dog_t *doggy;
