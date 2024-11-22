@@ -9,13 +9,10 @@
  * Description: Defines metadata about the dog and type of dog's stri
  */
 
-struct dog;
+typedef struct dog
+
 {
-       char->*name;
-       float->age;
-       char->*owner;
-}
-
-typedef struct dog_t;
-
-#endif
+	char *name;
+	float age;
+	char *owner;
+} dog_t;
