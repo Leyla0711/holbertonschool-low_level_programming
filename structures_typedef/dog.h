@@ -6,11 +6,5 @@
  * @age: age of the dog
  * @owner: name of the owner of the dog
  *
- * Description: Defines metadata about the dog and type of dog's struct
- */
-
-{
-	char *name;
-	float age;
-        char *owner;
-} 
+ * Description: Defines metadata about the dog and type of dog's stri:wq
+ 
