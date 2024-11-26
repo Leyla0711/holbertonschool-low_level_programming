@@ -3,12 +3,12 @@
 #include <stdio.h>
 
 /**
- * main - main function
- * @argc: argument count
- * @argv: string of arguments in array
- * Return: 0
- */
-
+  * main - ...
+  * @argc: ...
+  * @argv: ...
+  *
+  * Return: ...
+  */
 int main(int argc, char *argv[])
 {
 	int (*oprt)(int, int);
