@@ -1,79 +1,87 @@
 #include "main.h"
-
 /**
- * _errexit - print error message and exit
- * @str: err message as string
- * @file: file name as string
- * @code: exit code
- * Return: void
+ * usage_fail - prints error msg if number of args is wrong
+ * Return: none
  */
-void _errexit(char *str, char *file, int code)
+void usage_fail(void)
 {
-	dprintf(STDERR_FILENO, str, file);
-	exit(code);
-}
-
-/**
- * _cp - copy source file to destination file
- * @file_from: source file
- * @file_to: destination file
- *
- * Return: void
- */
-void _cp(char *file_from, char *file_to)
-{
-	int fd1, fd2, numread, numwrote;
-	char buffer[1024];
-
-	fd1 = open(file_from, O_RDONLY);
-	if (fd1 == -1)
-		_errexit("Error: Can't read from file %s\n", file_from, 98);
-
-	fd2 = open(file_to, O_CREAT | O_WRONLY | O_TRUNC, 0664);
-	if (fd2 == -1)
-		_errexit("Error: Can't write to %s\n", file_to, 99);
-
-	numread = 1024;
-	while (numread == 1024)
-	{
-		numread = read(fd1, buffer, 1024);
-		if (numread == -1)
-			_errexit("Error: Can't read from file %s\n", file_from, 98);
-
-		numwrote = write(fd2, buffer, numread);
-
-		if (numwrote == -1)
-			_errexit("Error: Can't write to %s\n", file_to, 99);
-	}
-
-	if (numread == -1)
-		_errexit("Error: Can't read from file %s\n", file_from, 98);
-	if (close(fd2) == -1)
-	{
-		dprintf(STDERR_FILENO, "Error: Can't close fd %d\n", fd2);
-		exit(100);
-	}
-	if (close(fd1) == -1)
-	{
-		dprintf(STDERR_FILENO, "Error: Can't close fd %d\n", fd2);
-		exit(100);
-	}
+	dprintf(STDERR_FILENO, "Usage: cp file_from file_to\n");
+	exit(97);
 }
 /**
- *main - copies a file to another file
- *@argc: number of arguments passed to function
- *@argv: array containing arguments
- *Return: 0 on success
+ * read_fail - prints error msg if fd_from doesn't exist or can't read from it
+ * @file: pointer to a file
+ * Return: none
  */
-int main(int argc, char *argv[])
+void read_fail(char *file)
 {
-	if (argc != 3)
+	dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", file);
+	exit(98);
+}
+/**
+ * write_fail - prints error msg if you can't create or write to a fd_to
+ * @file: pointer to a file
+ * Return: none
+ */
+void write_fail(char *file)
+{
+	dprintf(STDERR_FILENO, "Error: Can't write to %s\n", file);
+	exit(99);
+}
+/**
+ * close_fail - prints error msg if you can't close a file descriptor
+ * @fd: the file descriptor
+ * Return: none
+ */
+void close_fail(int fd)
+{
+	dprintf(STDERR_FILENO, "Error: Can't close fd %d\n", fd);
+	exit(100);
+}
+/**
+ * main - check the code for Holberton School students.
+ * @ac: argument count
+ * @av: aruments
+ * Return: Always 0.
+ * Usage: cp file_from file_to, followed by a new line, on the POSIX std error
+ */
+int main(int ac, char **av)
+{
+	int fd_from, fd_to, bytes_read, bytes_written;
+	mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH;
+	char *buffer;
+
+	if (ac != 3)
+		usage_fail();
+	if (av[1] == NULL)
+		read_fail(av[1]);
+	if (av[2] == NULL)
+		write_fail(av[2]);
+	fd_from = open(av[1], O_RDONLY);
+	if (fd_from == -1)
+		read_fail(av[1]);
+	fd_to = open(av[2], O_CREAT | O_WRONLY | O_TRUNC, mode);
+	if (fd_to == -1)
+		write_fail(av[2]);
+	buffer = malloc(sizeof(char) * BUFF_SIZE);
+	if (buffer == NULL)
+		return (1);
+	bytes_read = read(fd_from, buffer, BUFF_SIZE);
+	if (bytes_read == -1)
+		read_fail(av[1]);
+	while (bytes_read > 0)
 	{
-		dprintf(STDERR_FILENO, "Usage: cp file_from file_to\n");
-		exit(97);
+		bytes_written = write(fd_to, buffer, bytes_read);
+		if (bytes_written == -1)
+			write_fail(av[2]);
+		bytes_read = read(fd_from, buffer, BUFF_SIZE);
+		if (bytes_read == -1)
+			read_fail(av[1]);
 	}
-
-	_cp(argv[1], argv[2]);
-
+	if (close(fd_from) == -1)
+		close_fail(fd_from);
+	if (close(fd_to) == -1)
+		close_fail(fd_to);
+	free(buffer);
 	return (0);
 }
