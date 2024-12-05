@@ -8,9 +8,7 @@
   *
   * Return: ...
   */
-
 int main(int argc, char **argv)
-
 {
 	if (argc != 3)
 	{
@@ -29,7 +27,6 @@ int main(int argc, char **argv)
   *
   * Return: ...
   */
-
 void copy_file(const char *src, const char *dest)
 {
 	int ofd, tfd, readed;
@@ -40,7 +37,6 @@ void copy_file(const char *src, const char *dest)
 	{
 		dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", src);
 		exit(98);
-
 	}
 
 	tfd = open(dest, O_CREAT | O_WRONLY | O_TRUNC, 0664);
@@ -53,7 +49,7 @@ void copy_file(const char *src, const char *dest)
 		}
 	}
 
-        if (readed == -1)
+	if (readed == -1)
 	{
 		dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", src);
 		exit(98);
