@@ -2,11 +2,10 @@
 #include <stddef.h>
 
 /**
-*clear_bit - sets a bit at a position to 0
-*@n: number to be used
+*clear_bit - bit at a position to 0
+*@n: numbers to be used
 *@index: position to be cleared
-*
-*Return: 1 on success, -1 on fail
+*Return: 1 on if work -1 on if not
 */
 
 int clear_bit(unsigned long int *n, unsigned int index)

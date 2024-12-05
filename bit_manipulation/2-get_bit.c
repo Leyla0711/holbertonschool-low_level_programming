@@ -1,10 +1,9 @@
 #include "main.h"
 
 /**
-*get_bit - get the value of a bit at the given index
+*get_bit - bit at the given index
 *@n: the number
-*@index: index starting from 0 of the bit required
-*
+*@index:starting from 0 of the bit required
 *Return: The converted value
 */
 
