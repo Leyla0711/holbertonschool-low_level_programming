@@ -1,91 +1,72 @@
 #include "main.h"
+#include <stdio.h>
 
 /**
- * check_arguments - Checks if the correct number of arguments is passed.
- * @argc: The number of arguments passed to the program.
- * @argv: Array of arguments passed to the program.
+ * error_file - checks if files can be opened.
+ * @file_from: file_from.
+ * @file_to: file_to.
+ * @argv: arguments vector.
+ * Return: no return.
  */
-void check_arguments(int argc, char *argv[])
+void error_file(int file_from, int file_to, char *argv[])
 {
-    if (argc != 3)
-    {
-        write(2, "Usage: cp file_from file_to\n", 26);
-        exit(97);
-    }
+	if (file_from == -1)
+	{
+		dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", argv[1]);
+		exit(98);
+	}
+	if (file_to == -1)
+	{
+		dprintf(STDERR_FILENO, "Error: Can't write to %s\n", argv[2]);
+		exit(99);
+	}
 }
 
 /**
- * copy_file - Copies content from the source file to the destination file.
- * @src_fd: The file descriptor of the source file.
- * @dest_fd: The file descriptor of the destination file.
- */
-void copy_file(int src_fd, int dest_fd)
-{
-    char buffer[1024];
-    ssize_t read_bytes, write_bytes;
-
-    while ((read_bytes = read(src_fd, buffer, sizeof(buffer))) > 0)
-    {
-        write_bytes = write(dest_fd, buffer, read_bytes);
-        if (write_bytes != read_bytes)
-        {
-            write(2, "Error: Can't write to file\n", 26);
-            exit(99);
-        }
-    }
-}
-
-/**
- * main - Copies the content of one file to another.
- * @argc: Number of arguments passed to the program.
- * @argv: Array of arguments.
- * Return: 0 on success, error code on failure.
+ * main - check the code for Holberton School students.
+ * @argc: number of arguments.
+ * @argv: arguments vector.
+ * Return: Always 0.
  */
 int main(int argc, char *argv[])
 {
-    int src_fd, dest_fd;
+	int file_from, file_to, err_close;
+	ssize_t nchars, nwr;
+	char buf[1024];
 
-    check_arguments(argc, argv);
+	if (argc != 3)
+	{
+		dprintf(STDERR_FILENO, "%s\n", "Usage: cp file_from file_to");
+		exit(97);
+	}
 
-    /* Open source file */
-    src_fd = open(argv[1], O_RDONLY);
-    if (src_fd == -1)
-    {
-        write(2, "Error: Can't read from file ", 27);
-        write(2, argv[1], 27);
-        write(2, "\n", 1);
-        exit(98);
-    }
+	file_from = open(argv[1], O_RDONLY);
+	file_to = open(argv[2], O_CREAT | O_WRONLY | O_TRUNC | O_APPEND, 0664);
+	error_file(file_from, file_to, argv);
 
-    /* Open destination file */
-    dest_fd = open(argv[2], O_WRONLY | O_CREAT | O_TRUNC, 0664);
-    if (dest_fd == -1)
-    {
-        write(2, "Error: Can't write to file ", 26);
-        write(2, argv[2], 27);
-        write(2, "\n", 1);
-        exit(99);
-    }
+	nchars = 1024;
+	while (nchars == 1024)
+	{
+		nchars = read(file_from, buf, 1024);
+		if (nchars == -1)
+			error_file(-1, 0, argv);
+		nwr = write(file_to, buf, nchars);
+		if (nwr == -1)
+			error_file(0, -1, argv);
+	}
 
-    /* Copy content */
-    copy_file(src_fd, dest_fd);
+	err_close = close(file_from);
+	if (err_close == -1)
+	{
+		dprintf(STDERR_FILENO, "Error: Can't close fd %d\n", file_from);
+		exit(100);
+	}
 
-    /* Close the file descriptors */
-    if (close(src_fd) == -1)
-    {
-        write(2, "Error: Can't close fd ", 23);
-        write(2, argv[1], 27);
-        write(2, "\n", 1);
-        exit(100);
-    }
-
-    if (close(dest_fd) == -1)
-    {
-        write(2, "Error: Can't close fd ", 23);
-        write(2, argv[2], 27);
-        write(2, "\n", 1);
-        exit(100);
-    }
-
-    return (0);
+	err_close = close(file_to);
+	if (err_close == -1)
+	{
+		dprintf(STDERR_FILENO, "Error: Can't close fd %d\n", file_from);
+		exit(100);
+	}
+	return (0);
 }
