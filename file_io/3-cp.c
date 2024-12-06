@@ -1,114 +1,79 @@
 #include "main.h"
-#include <stdio.h>
-#include <stdlib.h>
 
 /**
- * check97 - checks for the correct number of arguments
- * @argc: number of arguments
+ * _errexit - print error message and exit
+ * @str: err message as string
+ * @file: file name as string
+ * @code: exit code
+ * Return: void
+ */
+void _errexit(char *str, char *file, int code)
+{
+	dprintf(STDERR_FILENO, str, file);
+	exit(code);
+}
+
+/**
+ * _cp - copy source file to destination file
+ * @file_from: source file
+ * @file_to: destination file
  *
  * Return: void
  */
-void check97(int argc)
+void _cp(char *file_from, char *file_to)
+{
+	int fd1, fd2, numread, numwrote;
+	char buffer[1024];
+
+	fd1 = open(file_from, O_RDONLY);
+	if (fd1 == -1)
+		_errexit("Error: Can't read from file %s\n", file_from, 98);
+
+	fd2 = open(file_to, O_CREAT | O_WRONLY | O_TRUNC, 0664);
+	if (fd2 == -1)
+		_errexit("Error: Can't write to %s\n", file_to, 99);
+
+	numread = 1024;
+	while (numread == 1024)
+	{
+		numread = read(fd1, buffer, 1024);
+		if (numread == -1)
+			_errexit("Error: Can't read from file %s\n", file_from, 98);
+
+		numwrote = write(fd2, buffer, numread);
+
+		if (numwrote == -1)
+			_errexit("Error: Can't write to %s\n", file_to, 99);
+	}
+
+	if (numread == -1)
+		_errexit("Error: Can't read from file %s\n", file_from, 98);
+	if (close(fd2) == -1)
+	{
+		dprintf(STDERR_FILENO, "Error: Can't close fd %d\n", fd2);
+		exit(100);
+	}
+	if (close(fd1) == -1)
+	{
+		dprintf(STDERR_FILENO, "Error: Can't close fd %d\n", fd2);
+		exit(100);
+	}
+}
+/**
+ *main - copies a file to another file
+ *@argc: number of arguments passed to function
+ *@argv: array containing arguments
+ *Return: 0 on success
+ */
+int main(int argc, char *argv[])
 {
 	if (argc != 3)
 	{
 		dprintf(STDERR_FILENO, "Usage: cp file_from file_to\n");
 		exit(97);
 	}
-}
 
-/**
- * check98 - checks that file_from exists and can be read
- * @check: checks if true of false
- * @file: file_from name
- * @fd_from: file descriptor of file_from, or -1
- * @fd_to: file descriptor of file_to, or -1
- *
- * Return: void
- */
-void check98(ssize_t check, char *file, int fd_from, int fd_to)
-{
-	if (check == -1)
-	{
-		dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", file);
-		if (fd_from != -1)
-			close(fd_from);
-		if (fd_to != -1)
-			close(fd_to);
-		exit(98);
-	}
-}
+	_cp(argv[1], argv[2]);
 
-/**
- * check99 - checks that file_to was created and/or can be written to
- * @check: checks if true of false
- * @file: file_to name
- * @fd_from: file descriptor of file_from, or -1
- * @fd_to: file descriptor of file_to, or -1
- *
- * Return: void
- */
-void check99(ssize_t check, char *file, int fd_from, int fd_to)
-{
-	if (check == -1)
-	{
-		dprintf(STDERR_FILENO, "Error: Can't write to %s\n", file);
-		if (fd_from != -1)
-			close(fd_from);
-		if (fd_to != -1)
-			close(fd_to);
-		exit(99);
-	}
-}
-
-/**
- * check100 - checks that file descriptors were closed properly
- * @check: checks if true or false
- * @fd: file descriptor
- *
- * Return: void
- */
-void check100(int check, int fd)
-{
-	if (check == -1)
-	{
-		dprintf(STDERR_FILENO, "Error: Can't close fd %d\n", fd);
-		exit(100);
-	}
-}
-/**
- * main - opies the content of a file to another file.
- * @argc: number of arguments passed
- * @argv: array of pointers to the arguments
- *
- * Return: 0 on success
- */
-int main(int argc, char *argv[])
-{
-	int fd_from, fd_to, close_to, close_from;
-	ssize_t lenr, lenw;
-	char buffer[1024];
-	mode_t file_perm;
-
-	check97(argc);
-	fd_from = open(argv[1], O_RDONLY);
-	check98((ssize_t)fd_from, argv[1], -1, -1);
-	file_perm = S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH;
-	fd_to = open(argv[2], O_WRONLY | O_CREAT | O_TRUNC, file_perm);
-	check99((ssize_t)fd_to, argv[2], fd_from, -1);
-	lenr = 1024;
-	while (lenr == 1024)
-	{
-		lenr = read(fd_from, buffer, 1024);
-		check98(lenr, argv[1], fd_from, fd_to);
-		lenw = write(fd_to, buffer, lenr);
-		if (lenw != lenr)
-			lenw = -1;
-		check99(lenw, argv[2], fd_from, fd_to);
-	}
-	close_to = close(fd_to);
-	close_from = close(fd_from);
-	check100(close_to, fd_to);
-	check100(close_from, fd_from);
 	return (0);
 }
